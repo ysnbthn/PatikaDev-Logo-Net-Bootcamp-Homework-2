@@ -4,6 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
+using WebApplication1.Filters;
 using WebApplication1.Helper;
 using WebApplication1.Middlewares;
 
@@ -28,6 +32,8 @@ namespace WebApplication1
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1", Version = "v1" });
                 // add app-version header parameter option to swagger
                 c.OperationFilter<AddVersionToHeaderParameter>();
+                // add filter to hide endpoint in documentation
+                c.DocumentFilter<HideFilter>();
             });
         }
 
@@ -42,7 +48,7 @@ namespace WebApplication1
             }
 
             // add custom middleware to request pipeline 
-            app.UseMiddleware<AppVersionControllerMiddleware>();
+            app.UseAppVersionControllerMiddleware();
 
             app.UseHttpsRedirection();
 
